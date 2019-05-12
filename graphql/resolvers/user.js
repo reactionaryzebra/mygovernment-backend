@@ -21,14 +21,18 @@ export default {
     },
     editUser: async (root, args) => {
       try {
-        const updatedUser = await User.findOneAndUpdate({ id: args.id }, args);
+        const updatedUser = await User.findByIdAndUpdate(args.id, args, {
+          new: true
+        });
+        return updatedUser;
       } catch (err) {
         throw new Error(err);
       }
     },
     deleteUser: async (root, args) => {
       try {
-        const deletedUser = await User.findOneAndDelete(args);
+        const deletedUser = await User.findByIdAndDelete(args.id);
+        return deletedUser;
       } catch (err) {
         throw new Error(err);
       }

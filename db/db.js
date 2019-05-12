@@ -4,7 +4,7 @@ const connectionString = "mongodb://localhost/testing";
 
 mongoose.connect(
   connectionString,
-  { useCreateIndex: true, useNewUrlParser: true }
+  { useCreateIndex: true, useNewUrlParser: true, useFindAndModify: false }
 );
 mongoose.connection.on("connected", () => {
   console.log(`Mongoose connected to ${connectionString}`);
