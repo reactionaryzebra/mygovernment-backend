@@ -19,5 +19,6 @@ type Representative {
 
 type Query {
   representatives(address: String!): [Representative!]!
+  representative(name: String!): Representative
 }
 `;
