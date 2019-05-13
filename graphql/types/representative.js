@@ -1,3 +1,8 @@
+import Channel from "./channel";
+import Committee from "./committee";
+import Bill from "./bill";
+import Article from "./article";
+
 export default `
 type Representative {
   office: String!
@@ -13,6 +18,6 @@ type Representative {
 }
 
 type Query {
-  representatives: [Representatives!]!
+  representatives(address: String!): [Representative!]!
 }
 `;
