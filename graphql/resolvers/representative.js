@@ -4,7 +4,9 @@ require("dotenv").config();
 
 const googleRoot = "https://www.googleapis.com/civicinfo/v2/representatives";
 const googleKey = process.env.GOOGLE_KEY;
+const propublicaRoot = "https://api.propublica.org/congress/v1";
 const propublicaKey = process.env.PRO_PUBLICA_KEY;
+const propublicaHeaders = { "X-API-Key": `${propublicaKey}` };
 
 const mergeOffice = (officials, offices) => {
   offices.forEach(office => {
@@ -17,42 +19,58 @@ const mergeOffice = (officials, offices) => {
 const tagCongress = async officials => {
   try {
     const senateData = await axios.get(
-      "https://api.propublica.org/congress/v1/115/senate/members.json",
+      `${propublicaRoot}/115/senate/members.json`,
       {
-        headers: { "X-API-Key": `${propublicaKey}` }
+        headers: propublicaHeaders
       }
     );
     const houseData = await axios.get(
-      "https://api.propublica.org/congress/v1/115/house/members.json",
+      `${propublicaRoot}/115/house/members.json`,
       {
-        headers: { "X-API-Key": `${propublicaKey}` }
+        headers: propublicaHeaders
       }
     );
     const senateList = senateData.data.results[0].members;
     const houseList = houseData.data.results[0].members;
-    officials.forEach(official => {
+    officials = officials.map(official => {
       if (official.office.includes("United States Senate")) {
-        senateList.find(senator => {
+        senateList.forEach(senator => {
           if (
             official.name.includes(senator.first_name) &&
             official.name.includes(senator.last_name)
           ) {
             official.proPublicaId = senator.id;
-            console.log(official);
           }
         });
       } else if (official.office.includes("United States House")) {
-        houseList.find(rep => {
+        houseList.forEach(rep => {
           if (
             official.name.includes(rep.first_name) &&
             official.name.includes(rep.last_name)
           ) {
             official.proPublicaId = rep.id;
-            console.log(official);
           }
         });
       }
+      return official;
     });
+  } catch (err) {
+    throw new Error(err);
+  }
+};
+
+const mergeCommittees = async officials => {
+  try {
+    for (const official of officials) {
+      if (official.proPublicaId) {
+        const propublicaData = await axios.get(
+          `${propublicaRoot}/members/${official.proPublicaId}`,
+          { headers: propublicaHeaders }
+        );
+        const committeeList = propublicaData.data.results.roles[0].committees;
+        console.log(committeeList);
+      }
+    }
   } catch (err) {
     throw new Error(err);
   }
