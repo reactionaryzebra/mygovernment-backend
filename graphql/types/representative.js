@@ -12,7 +12,7 @@ type Representative {
   urls: [String!]!
   photoUrl: String!
   channels: [Channel!]!
-  roles: [Committee!]
+  committees: [Committee!]
   bills: [Bill!]
   news: [Article]
 }

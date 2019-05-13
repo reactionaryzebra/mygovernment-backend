@@ -54,6 +54,7 @@ const tagCongress = async officials => {
       }
       return official;
     });
+    return officials;
   } catch (err) {
     throw new Error(err);
   }
@@ -67,10 +68,11 @@ const mergeCommittees = async officials => {
           `${propublicaRoot}/members/${official.proPublicaId}`,
           { headers: propublicaHeaders }
         );
-        const committeeList = propublicaData.data.results.roles[0].committees;
-        console.log(committeeList);
+        official.committees =
+          propublicaData.data.results[0].roles[0].committees;
       }
     }
+    return officials;
   } catch (err) {
     throw new Error(err);
   }
@@ -85,10 +87,11 @@ export default {
             args.address
           )}`
         );
-        const officials = googleData.data.officials;
+        let officials = googleData.data.officials;
         const offices = googleData.data.offices;
         mergeOffice(officials, offices);
-        tagCongress(officials);
+        officials = await tagCongress(officials);
+        officials = await mergeCommittees(officials);
         return officials;
       } catch (err) {
         throw new Error(err);
