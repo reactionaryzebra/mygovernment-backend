@@ -7,13 +7,13 @@ export default `
 type Representative {
   office: String!
   name: String!
-  party: String!
-  phones: [String!]!
-  urls: [String!]!
-  photoUrl: String!
-  channels: [Channel!]!
-  committees: [Committee!]
-  bills: [Bill!]
+  party: String
+  phones: [String]
+  urls: [String]
+  photoUrl: String
+  channels: [Channel]
+  committees: [Committee]
+  bills: [Bill]
   news: [Article]
 }
 
