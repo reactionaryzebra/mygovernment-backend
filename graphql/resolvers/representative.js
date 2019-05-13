@@ -14,6 +14,7 @@ const mergeOffice = (officials, offices) => {
       officials[officialIndex].office = office.name;
     });
   });
+  return officials;
 };
 
 const tagCongress = async officials => {
@@ -32,7 +33,7 @@ const tagCongress = async officials => {
     );
     const senateList = senateData.data.results[0].members;
     const houseList = houseData.data.results[0].members;
-    officials = officials.map(official => {
+    for (const official of officials) {
       if (official.office.includes("United States Senate")) {
         senateList.forEach(senator => {
           if (
@@ -52,8 +53,7 @@ const tagCongress = async officials => {
           }
         });
       }
-      return official;
-    });
+    }
     return officials;
   } catch (err) {
     throw new Error(err);
@@ -78,6 +78,25 @@ const mergeCommittees = async officials => {
   }
 };
 
+const mergeBills = async officials => {
+  try {
+    for (const official of officials) {
+      if (official.proPublicaId) {
+        const propublicaData = await axios.get(
+          `${propublicaRoot}/members/${
+            official.proPublicaId
+          }/bills/cosponsored.json`,
+          { headers: propublicaHeaders }
+        );
+        official.bills = propublicaData.data.results[0].bills;
+      }
+    }
+    return officials;
+  } catch (err) {
+    throw new Error(err);
+  }
+};
+
 export default {
   Query: {
     representatives: async (root, args) => {
@@ -89,9 +108,10 @@ export default {
         );
         let officials = googleData.data.officials;
         const offices = googleData.data.offices;
-        mergeOffice(officials, offices);
+        officials = await mergeOffice(officials, offices);
         officials = await tagCongress(officials);
         officials = await mergeCommittees(officials);
+        officials = await mergeBills(officials);
         return officials;
       } catch (err) {
         throw new Error(err);

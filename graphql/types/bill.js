@@ -1,9 +1,9 @@
 export default `
 type Bill {
-  shortTitle: String!
-  introducedDate: String!
+  short_title: String!
+  introduced_date: String!
   active: Boolean!
-  primarySubject: String!
+  primary_subject: String!
   summary: String!
 }
 `;
