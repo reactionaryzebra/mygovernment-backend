@@ -7,6 +7,9 @@ const googleKey = process.env.GOOGLE_KEY;
 const propublicaRoot = "https://api.propublica.org/congress/v1";
 const propublicaKey = process.env.PRO_PUBLICA_KEY;
 const propublicaHeaders = { "X-API-Key": `${propublicaKey}` };
+const newsRoot = "https://newsapi.org/v2/everything";
+const newsKey = process.env.NEWS_KEY;
+const newsHeaders = { "X-API-Key": `${newsKey}` };
 
 const mergeOffice = (officials, offices) => {
   offices.forEach(office => {
@@ -97,6 +100,21 @@ const mergeBills = async officials => {
   }
 };
 
+const mergeNews = async officials => {
+  try {
+    for (const official of officials) {
+      const newsData = await axios.get(
+        `${newsRoot}?q=${encodeURI(official.name)}`,
+        { headers: newsHeaders }
+      );
+      official.news = newsData.data.articles;
+    }
+    return officials;
+  } catch (err) {
+    throw new Error(err);
+  }
+};
+
 export default {
   Query: {
     representatives: async (root, args) => {
@@ -112,6 +130,7 @@ export default {
         officials = await tagCongress(officials);
         officials = await mergeCommittees(officials);
         officials = await mergeBills(officials);
+        officials = await mergeNews(officials);
         return officials;
       } catch (err) {
         throw new Error(err);
