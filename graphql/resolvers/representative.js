@@ -115,6 +115,14 @@ const mergeNews = async officials => {
   }
 };
 
+const makeCleanData = async (officials, offices) => {
+  officials = await mergeOffice(officials, offices);
+  officials = await tagCongress(officials);
+  officials = await mergeCommittees(officials);
+  officials = await mergeBills(officials);
+  return officials;
+};
+
 export default {
   Query: {
     representatives: async (root, args) => {
@@ -126,12 +134,7 @@ export default {
         );
         let officials = googleData.data.officials;
         const offices = googleData.data.offices;
-        officials = await mergeOffice(officials, offices);
-        officials = await tagCongress(officials);
-        officials = await mergeCommittees(officials);
-        officials = await mergeBills(officials);
-        officials = await mergeNews(officials);
-        return officials;
+        return makeCleanData(officials, offices);
       } catch (err) {
         throw new Error(err);
       }
