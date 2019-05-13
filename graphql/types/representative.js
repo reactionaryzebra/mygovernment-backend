@@ -11,4 +11,8 @@ type Representative {
   bills: [Bill!]
   news: [Article]
 }
+
+type Query {
+  representatives: [Representatives!]!
+}
 `;
