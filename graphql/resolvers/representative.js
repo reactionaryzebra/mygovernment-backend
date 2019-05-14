@@ -16,7 +16,7 @@ const mergeOffice = (officials, offices) => {
     office.officialIndices.forEach(officialIndex => {
       if (officials[officialIndex]) {
         officials[officialIndex].office = office.name;
-        officials[officialIndex].division = office.divisionId
+        officials[officialIndex].division = office.divisionId;
       }
     });
   });
@@ -124,11 +124,16 @@ const makeCleanList = async (officials, offices) => {
 };
 
 const makeCleanRepresentative = async (officials, offices) => {
-  officials = await mergeOffice(officials, offices);
-  officials = await tagCongress(officials);
-  officials = await mergeCommittees(officials);
-  officials = await mergeBills(officials);
-  return officials;
+  try {
+    officials = await mergeOffice(officials, offices);
+    officials = await tagCongress(officials);
+    officials = await mergeCommittees(officials);
+    officials = await mergeBills(officials);
+    officials = await mergeNews(officials);
+    return officials;
+  } catch (err) {
+    throw new Error(err);
+  }
 };
 
 export default {

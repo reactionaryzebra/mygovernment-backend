@@ -12,6 +12,7 @@ type Representative {
   urls: [String]
   photoUrl: String
   division: String
+  proPublicaId: String
   channels: [Channel]
   committees: [Committee]
   bills: [Bill]
