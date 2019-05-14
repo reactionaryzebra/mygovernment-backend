@@ -11,6 +11,21 @@ const newsRoot = "https://newsapi.org/v2/everything";
 const newsKey = process.env.NEWS_KEY;
 const newsHeaders = { "X-API-Key": `${newsKey}` };
 
+const fetchData = async (address) => {
+  try{
+    const googleData = await axios.get(
+      `https://www.googleapis.com/civicinfo/v2/representatives?key=${googleKey}&address=${encodeURI(
+        address
+      )}`
+    );
+    const officials = googleData.data.officials;
+    const offices = googleData.data.offices;
+    return {officials, offices}
+  } catch(err) {
+    throw new Error(err)
+  }
+}
+
 const mergeOffice = (officials, offices) => {
   offices.forEach(office => {
     office.officialIndices.forEach(officialIndex => {
@@ -123,9 +138,8 @@ const makeCleanList = async (officials, offices) => {
   return officials;
 };
 
-const makeCleanRepresentative = async (officials, offices) => {
+const makeCleanRepresentative = async (officials) => {
   try {
-    officials = await mergeOffice(officials, offices);
     officials = await tagCongress(officials);
     officials = await mergeCommittees(officials);
     officials = await mergeBills(officials);
@@ -140,33 +154,23 @@ export default {
   Query: {
     representatives: async (root, args) => {
       try {
-        const googleData = await axios.get(
-          `https://www.googleapis.com/civicinfo/v2/representatives?key=${googleKey}&address=${encodeURI(
-            args.address
-          )}`
-        );
-        let officials = googleData.data.officials;
-        const offices = googleData.data.offices;
-        return makeCleanList(officials, offices);
+        const data = await fetchData(args.address)
+        return makeCleanList(data.officials, data.offices);
       } catch (err) {
         throw new Error(err);
       }
     },
     representative: async (root, args) => {
       try {
-        const googleData = await axios.get(
-          `https://www.googleapis.com/civicinfo/v2/representatives?key=${googleKey}&address=${encodeURI(
-            args.address
-          )}`
-        );
+        const data = await fetchData(args.address)
+        const officials = await mergeOffice(data.officials, data.offices);
         let official = [
-          googleData.data.officials.find(
+          officials.find(
             official => official.name === args.name
           )
         ];
         official = await makeCleanRepresentative(
-          official,
-          googleData.data.offices
+          official
         );
         return official[0];
       } catch (err) {
