@@ -16,6 +16,7 @@ const mergeOffice = (officials, offices) => {
     office.officialIndices.forEach(officialIndex => {
       if (officials[officialIndex]) {
         officials[officialIndex].office = office.name;
+        officials[officialIndex].division = office.divisionId
       }
     });
   });

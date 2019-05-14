@@ -11,6 +11,7 @@ type Representative {
   phones: [String]
   urls: [String]
   photoUrl: String
+  division: String
   channels: [Channel]
   committees: [Committee]
   bills: [Bill]
