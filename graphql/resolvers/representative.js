@@ -14,7 +14,9 @@ const newsHeaders = { "X-API-Key": `${newsKey}` };
 const mergeOffice = (officials, offices) => {
   offices.forEach(office => {
     office.officialIndices.forEach(officialIndex => {
-      officials[officialIndex].office = office.name;
+      if (officials[officialIndex]) {
+        officials[officialIndex].office = office.name;
+      }
     });
   });
   return officials;
@@ -115,7 +117,12 @@ const mergeNews = async officials => {
   }
 };
 
-const makeCleanData = async (officials, offices) => {
+const makeCleanList = async (officials, offices) => {
+  officials = await mergeOffice(officials, offices);
+  return officials;
+};
+
+const makeCleanRepresentative = async (officials, offices) => {
   officials = await mergeOffice(officials, offices);
   officials = await tagCongress(officials);
   officials = await mergeCommittees(officials);
@@ -134,7 +141,28 @@ export default {
         );
         let officials = googleData.data.officials;
         const offices = googleData.data.offices;
-        return makeCleanData(officials, offices);
+        return makeCleanList(officials, offices);
+      } catch (err) {
+        throw new Error(err);
+      }
+    },
+    representative: async (root, args) => {
+      try {
+        const googleData = await axios.get(
+          `https://www.googleapis.com/civicinfo/v2/representatives?key=${googleKey}&address=${encodeURI(
+            args.address
+          )}`
+        );
+        let official = [
+          googleData.data.officials.find(
+            official => official.name === args.name
+          )
+        ];
+        official = await makeCleanRepresentative(
+          official,
+          googleData.data.offices
+        );
+        return official[0];
       } catch (err) {
         throw new Error(err);
       }
