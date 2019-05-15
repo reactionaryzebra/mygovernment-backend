@@ -5,7 +5,8 @@ export default {
   Query: {
     user: async (root, args) => {
       try {
-        const foundUser = await User.findOne(args);
+        const foundUser = await User.findById(args.id);
+        return foundUser
       } catch (err) {
         throw new Error(err);
       }
