@@ -42,10 +42,17 @@ export default {
           authToken.message = 'This Username is already taken'
         } else {
           if (args.password === args.confirmPassword){
-            bcrypt.hashSync(args.password, bcrypt.genSaltSync(10))
-            const newUser = await User.create({args})
+            const hashedPassword = await bcrypt.hashSync(args.password, bcrypt.genSaltSync(10))
+            const newUser = await User.create({
+              username: args.username,
+              password: hashedPassword,
+              eMail: args.email,
+              address: args.address
+              })
             authToken.logged = true
             authToken.address = args.address
+          } else {
+            authToken.message = 'Passwords do not match'
           }
         }
         return authToken

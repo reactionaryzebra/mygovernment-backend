@@ -30,7 +30,7 @@ type Mutation {
     verified: Boolean
     ): User
 
-  register(user: User!): AuthToken,
-  login(email: String!, password: String!, confirmPassword: String!): AuthToken
+  register(username: String!, email: String!, password: String!, confirmPassword: String!, address: String!): AuthToken,
+  login(email: String!, password: String!): AuthToken
 }
 `;
