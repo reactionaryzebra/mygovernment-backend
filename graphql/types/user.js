@@ -11,13 +11,6 @@ type Query {
   user(id: String!): User
 }
 type Mutation {
-  addUser(
-    id: String!,
-    username: String!,
-    password: String!,
-    eMail: String!,
-    address: String!,
-    ): User
 
   editUser(
     id: String,
@@ -36,5 +29,8 @@ type Mutation {
     address: String,
     verified: Boolean
     ): User
+
+  register(user: User!): AuthToken,
+  login(email: String!, password: String!, confirmPassword: String!): AuthToken
 }
 `;
