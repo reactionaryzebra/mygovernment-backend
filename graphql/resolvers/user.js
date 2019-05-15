@@ -42,13 +42,9 @@ export default {
           authToken.message = "This Username is already taken";
         } else {
           if (args.password === args.confirmPassword) {
-            const hashedPassword = await bcrypt.hashSync(
-              args.password,
-              bcrypt.genSaltSync(10)
-            );
             const newUser = await User.create({
               username: args.username,
-              password: hashedPassword,
+              password: args.password,
               eMail: args.email,
               address: args.address
             });
@@ -72,10 +68,7 @@ export default {
         };
         const foundUser = await User.findOne({ username: args.username });
         if (foundUser) {
-          const success = await bcrypt.compareSync(
-            foundUser.password,
-            args.password
-          );
+          const success = await foundUser.validatePassword(args.password);
           if (success) {
             authToken.logged = true;
             authToken.user = foundUser;
