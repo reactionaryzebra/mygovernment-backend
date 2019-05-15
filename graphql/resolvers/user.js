@@ -53,7 +53,7 @@ export default {
               address: args.address
             });
             authToken.logged = true;
-            authToken.address = args.address;
+            authToken.user = newUser;
           } else {
             authToken.message = "Passwords do not match";
           }
@@ -78,7 +78,7 @@ export default {
           );
           if (success) {
             authToken.logged = true;
-            authToken.address = foundUser.address;
+            authToken.user = foundUser;
           } else {
             authToken.message = "Incorrect password";
           }
