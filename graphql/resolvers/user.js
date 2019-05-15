@@ -1,5 +1,5 @@
 import User from "../../models/User";
-import bcrypt from 'bcryptjs'
+import bcrypt from "bcryptjs";
 
 export default {
   Query: {
@@ -34,30 +34,60 @@ export default {
       try {
         const authToken = {
           logged: false,
-          message: '',
-          address: ''
-        }
-        const foundUser = await User.findOne({username: args.username})
+          message: "",
+          address: ""
+        };
+        const foundUser = await User.findOne({ username: args.username });
         if (foundUser) {
-          authToken.message = 'This Username is already taken'
+          authToken.message = "This Username is already taken";
         } else {
-          if (args.password === args.confirmPassword){
-            const hashedPassword = await bcrypt.hashSync(args.password, bcrypt.genSaltSync(10))
+          if (args.password === args.confirmPassword) {
+            const hashedPassword = await bcrypt.hashSync(
+              args.password,
+              bcrypt.genSaltSync(10)
+            );
             const newUser = await User.create({
               username: args.username,
               password: hashedPassword,
               eMail: args.email,
               address: args.address
-              })
-            authToken.logged = true
-            authToken.address = args.address
+            });
+            authToken.logged = true;
+            authToken.address = args.address;
           } else {
-            authToken.message = 'Passwords do not match'
+            authToken.message = "Passwords do not match";
           }
         }
-        return authToken
+        return authToken;
       } catch (err) {
-        throw new Error(err)
+        throw new Error(err);
+      }
+    },
+    login: async (root, args) => {
+      try {
+        const authToken = {
+          logged: false,
+          message: "",
+          address: ""
+        };
+        const foundUser = await User.findOne({ username: args.username });
+        if (foundUser) {
+          const success = await bcrypt.compareSync(
+            foundUser.password,
+            args.password
+          );
+          if (success) {
+            authToken.logged = true;
+            authToken.address = foundUser.address;
+          } else {
+            authToken.message = "Incorrect password";
+          }
+        } else {
+          authToken.message = "This username does not exist";
+        }
+        return authToken;
+      } catch (err) {
+        throw new Error(err);
       }
     }
   }

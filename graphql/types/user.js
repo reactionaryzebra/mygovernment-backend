@@ -31,6 +31,6 @@ type Mutation {
     ): User
 
   register(username: String!, email: String!, password: String!, confirmPassword: String!, address: String!): AuthToken,
-  login(email: String!, password: String!): AuthToken
+  login(username: String!, password: String!): AuthToken
 }
 `;
