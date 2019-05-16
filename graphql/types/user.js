@@ -23,7 +23,7 @@ type Mutation {
 
   deleteUser(
     id: String
-    ): User
+    ): Boolean
 
   register(username: String!, email: String!, password: String!, confirmPassword: String!, address: String!): AuthToken,
   login(username: String!, password: String!): AuthToken
