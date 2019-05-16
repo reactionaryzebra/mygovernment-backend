@@ -26,7 +26,7 @@ export default {
     deleteUser: async (root, args) => {
       try {
         const deletedUser = await User.findByIdAndDelete(args.id);
-        return deletedUser;
+        return true;
       } catch (err) {
         throw new Error(err);
       }
