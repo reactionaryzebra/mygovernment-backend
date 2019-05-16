@@ -10,6 +10,9 @@
     "start": "npm run build && node ./build/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "engines": {
+    "node": "10.15.0"
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
