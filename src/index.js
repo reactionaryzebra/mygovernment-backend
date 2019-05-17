@@ -2,6 +2,7 @@ import express from "express";
 import expressGraphQL from "express-graphql";
 import mongoose from "mongoose";
 import cors from "cors";
+import 'babel-polyfill';
 require("dotenv").config();
 
 import schema from "./graphql/";
