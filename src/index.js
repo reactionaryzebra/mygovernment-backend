@@ -4,11 +4,11 @@ import mongoose from "mongoose";
 import cors from "cors";
 require("dotenv").config();
 
-import schema from "../graphql/";
+import schema from "./graphql/";
 
 const PORT = process.env.PORT || "4000";
 const app = express();
-require("../db/db");
+require("./db/db");
 
 
 
