@@ -11,11 +11,15 @@ const PORT = process.env.PORT || "4000";
 const app = express();
 require("./db/db");
 
-
+const corsOptions = {
+ origin: 'https://my-government.herokuapp.com',
+ credentials: true,
+ optionsSuccessStatus: 200 // some legacy browsers, and options requests
+};
 
 app.use(
   "/graphql",
-  cors(),
+  cors(corsOptions),
   express.json(),
   expressGraphQL({ schema, graphiql: true })
 );
