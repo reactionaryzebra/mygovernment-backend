@@ -17,6 +17,14 @@ const corsOptions = {
  optionsSuccessStatus: 200 // some legacy browsers, and options requests
 };
 
+app.use(function (req, res, next){
+  if (req.headers['x-forwarded-proto'] === 'https') {
+    res.redirect('http://' + req.hostname + req.url);
+  } else {
+    next();
+  }
+});
+
 app.use(
   "/graphql",
   cors(corsOptions),
